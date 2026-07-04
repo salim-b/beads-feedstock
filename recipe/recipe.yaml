@@ -1,5 +1,5 @@
 context:
-  version: "1.0.5"
+  version: "1.1.0"
 
 package:
   name: beads
@@ -7,11 +7,9 @@ package:
 
 source:
   - url: https://github.com/gastownhall/beads/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: 06e52a953b2e46044c70bc41421554c5d006370b1a25905b752d02eb0b337f0d
+    sha256: b38263c14125f5c05b6b70af06d1d3f152a7570e625518746ff8d783d11b4eac
   # the following dependencies miss standard license file layout, so we have to manually add their license files
-  - url: https://raw.githubusercontent.com/mattn/go-localereader/master/LICENSE
-    sha256: dceede03550621e65ec7b79fcba87cf6dbb9d31132a8ae71a8fe8ceec0af7da3
-    target_directory: library_licenses_2/github.com/mattn/go-localereader
+  # (`github.com/dolthub/eventkit` has no license)
   - url: https://raw.githubusercontent.com/apache/arrow-go/main/LICENSE.txt
     sha256: ff2fe52b8dfd2574c6ea7f0c407948c857f62672c2a3a9a17083ee10af8067ef
     target_directory: library_licenses_2/github.com/apache/arrow-go
@@ -21,12 +19,15 @@ source:
   - url: https://raw.githubusercontent.com/kch42/buzhash/master/LICENSE
     sha256: e36eb71189a6d30b09337cbf5fb5155f7286bc0e728d5fbad163723abc6b170c
     target_directory: library_licenses_2/github.com/kch42/buzhash
+  - url: https://raw.githubusercontent.com/mattn/go-localereader/master/LICENSE
+    sha256: dceede03550621e65ec7b79fcba87cf6dbb9d31132a8ae71a8fe8ceec0af7da3
+    target_directory: library_licenses_2/github.com/mattn/go-localereader
 
 build:
-  number: 1
+  number: 0
   script:
     # upstream refs: https://github.com/gastownhall/beads/blob/main/docs/INSTALLING.md & https://github.com/gastownhall/beads/blob/main/.goreleaser.yml
-    - go-licenses save ./cmd/bd --save_path=library_licenses --ignore=github.com/apache/arrow/go/arrow --ignore=github.com/apache/thrift/lib/go/thrift --ignore=github.com/kch42/buzhash --ignore=github.com/mattn/go-localereader
+    - go-licenses save ./cmd/bd --save_path=library_licenses --ignore=github.com/apache/arrow/go/arrow --ignore=github.com/apache/thrift/lib/go/thrift --ignore=github.com/dolthub/eventkit --ignore=github.com/dolthub/eventkit/transport/ga4 --ignore=github.com/kch42/buzhash --ignore=github.com/mattn/go-localereader
     - if: unix
       then:
         - DEFAULT_BRANCH="$(curl -s "https://api.github.com/repos/gastownhall/beads" | jq -r '.default_branch')"
