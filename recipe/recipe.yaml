@@ -24,7 +24,7 @@ source:
     target_directory: library_licenses_2/github.com/mattn/go-localereader
 
 build:
-  number: 0
+  number: 1
   script:
     # upstream refs: https://github.com/gastownhall/beads/blob/main/docs/INSTALLING.md & https://github.com/gastownhall/beads/blob/main/.goreleaser.yml
     - go-licenses save ./cmd/bd --save_path=library_licenses --ignore=github.com/apache/arrow/go/arrow --ignore=github.com/apache/thrift/lib/go/thrift --ignore=github.com/dolthub/eventkit --ignore=github.com/dolthub/eventkit/transport/ga4 --ignore=github.com/kch42/buzhash --ignore=github.com/mattn/go-localereader
@@ -73,8 +73,16 @@ requirements:
 
 tests:
   - script:
-      - bd --help
-      - bd --version
+      - if: win
+        then: |
+          # required to avoid preventing test cleanup by orphaned dolt server process
+          set BEADS_DOLT_AUTO_START=0
+          bd --help
+          bd --version
+      - if: unix
+        then: |
+          bd --help
+          bd --version
   - package_contents:
       bin:
         - bd
