@@ -35,10 +35,12 @@ build:
         - SHORT_COMMIT_HASH="$(echo "${COMMIT_HASH}" | cut -c 1-7)"
         - go build -o="$PREFIX"/bin/bd -v -ldflags="-s -w -X main.Branch=${DEFAULT_BRANCH} -X main.Build=${SHORT_COMMIT_HASH} -X main.Commit=${COMMIT_HASH} -X main.Version=${{ version }}" -tags=gms_pure_go -trimpath ./cmd/bd
         # generate shell completions
-        - mkdir -p "$PREFIX"/share/bash-completion/completions "$PREFIX"/share/fish/vendor_completions.d "$PREFIX"/share/zsh/site-functions
-        - '"$PREFIX"/bin/bd completion bash > "$PREFIX"/share/bash-completion/completions/bd'
-        - '"$PREFIX"/bin/bd completion fish > "$PREFIX"/share/fish/vendor_completions.d/bd.fish'
-        - '"$PREFIX"/bin/bd completion zsh  > "$PREFIX"/share/zsh/site-functions/_bd'
+        - if: build_platform == host_platform
+          then:
+            - mkdir -p "$PREFIX"/share/bash-completion/completions "$PREFIX"/share/fish/vendor_completions.d "$PREFIX"/share/zsh/site-functions
+            - '"$PREFIX"/bin/bd completion bash > "$PREFIX"/share/bash-completion/completions/bd'
+            - '"$PREFIX"/bin/bd completion fish > "$PREFIX"/share/fish/vendor_completions.d/bd.fish'
+            - '"$PREFIX"/bin/bd completion zsh  > "$PREFIX"/share/zsh/site-functions/_bd'
         # merge library license files
         - cp -a library_licenses_2/. library_licenses/ && rm -rf library_licenses_2
     - if: win
@@ -48,12 +50,14 @@ build:
         - set "SHORT_COMMIT_HASH=%COMMIT_HASH:~0,7%"
         - go build -o="%LIBRARY_BIN%"\bd.exe -v -ldflags="-s -w -X main.Branch=%DEFAULT_BRANCH% -X main.Build=%SHORT_COMMIT_HASH% -X main.Commit=%COMMIT_HASH% -X main.version=${{ version }}" -tags=gms_pure_go -trimpath ./cmd/bd
         # generate shell completions
-        - mkdir "%LIBRARY_PREFIX%"\share\bash-completion\completions
-        - mkdir "%LIBRARY_PREFIX%"\share\fish\vendor_completions.d
-        - mkdir "%LIBRARY_PREFIX%"\share\zsh\site-functions
-        - '"%LIBRARY_BIN%"\bd.exe completion bash > "%LIBRARY_PREFIX%"\share\bash-completion\completions\bd'
-        - '"%LIBRARY_BIN%"\bd.exe completion fish > "%LIBRARY_PREFIX%"\share\fish\vendor_completions.d\bd.fish'
-        - '"%LIBRARY_BIN%"\bd.exe completion zsh  > "%LIBRARY_PREFIX%"\share\zsh\site-functions\_bd'
+        - if: build_platform == host_platform
+          then:
+            - mkdir "%LIBRARY_PREFIX%"\share\bash-completion\completions
+            - mkdir "%LIBRARY_PREFIX%"\share\fish\vendor_completions.d
+            - mkdir "%LIBRARY_PREFIX%"\share\zsh\site-functions
+            - '"%LIBRARY_BIN%"\bd.exe completion bash > "%LIBRARY_PREFIX%"\share\bash-completion\completions\bd'
+            - '"%LIBRARY_BIN%"\bd.exe completion fish > "%LIBRARY_PREFIX%"\share\fish\vendor_completions.d\bd.fish'
+            - '"%LIBRARY_BIN%"\bd.exe completion zsh  > "%LIBRARY_PREFIX%"\share\zsh\site-functions\_bd'
         # merge library license files
         - xcopy "library_licenses_2\*" "library_licenses\" /E /I /Y & if errorlevel 1 exit /b %ERRORLEVEL% & rmdir /S /Q "library_licenses_2"
 
@@ -85,12 +89,12 @@ tests:
       bin:
         - bd
       files:
-        - if: unix
+        - if: unix and build_platform == host_platform
           then:
             - share/bash-completion/completions/bd
             - share/fish/vendor_completions.d/bd.fish
             - share/zsh/site-functions/_bd
-        - if: win
+        - if: win and build_platform == host_platform
           then:
             - Library/share/bash-completion/completions/bd
             - Library/share/fish/vendor_completions.d/bd.fish
