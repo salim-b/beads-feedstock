@@ -1,5 +1,5 @@
 context:
-  version: "1.1.0"
+  version: "1.1.2"
 
 package:
   name: beads
@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://github.com/gastownhall/beads/archive/refs/tags/v${{ version }}.tar.gz
-    sha256: b38263c14125f5c05b6b70af06d1d3f152a7570e625518746ff8d783d11b4eac
+    sha256: 03ad2d43a97c75248ecfae28cad6789af506861c18568399c6e1432b02c1fe48
   # the following dependencies miss standard license file layout, so we have to manually add their license files
   # (`github.com/dolthub/eventkit` has no license)
   - url: https://raw.githubusercontent.com/apache/arrow-go/main/LICENSE.txt
@@ -24,7 +24,7 @@ source:
     target_directory: library_licenses_2/github.com/mattn/go-localereader
 
 build:
-  number: 1
+  number: 0
   script:
     # upstream refs: https://github.com/gastownhall/beads/blob/main/docs/INSTALLING.md & https://github.com/gastownhall/beads/blob/main/.goreleaser.yml
     - go-licenses save ./cmd/bd --save_path=library_licenses --ignore=github.com/apache/arrow/go/arrow --ignore=github.com/apache/thrift/lib/go/thrift --ignore=github.com/dolthub/eventkit --ignore=github.com/dolthub/eventkit/transport/ga4 --ignore=github.com/kch42/buzhash --ignore=github.com/mattn/go-localereader
